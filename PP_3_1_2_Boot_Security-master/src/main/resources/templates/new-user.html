@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New user</title>
+</head>
+<body>
+<form method="POST" ACTION="saveUser">
+    <label for="Name">Name</label>
+    <input name="name" type="text" id="Name"/>
+    <br>
+    <label for="surname">Surname</label>
+    <input name="surname" type="text" id="surname"/>
+    <br>
+
+    <label>Username</label>
+    <input name="username" type="text" id="username"/>
+    <br>
+    <label>Password</label>
+    <input name="password" type="text" id="password"/>
+    <br>
+
+    <label>Choose your role:</label>
+    <select class="form-select" size="3" aria-label="size 3 select example" name="rolesFromFront">
+        <option th:value="${ROLE_ADMIN}">Admin</option>
+        <option th:value="${ROLE_USER}">User</option>
+    </select>
+    <br>
+    <br>
+
+    <input type="submit" value="ok"/>
+
+</form>
+</body>
+</html>
