@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,12 +20,16 @@ public class User implements UserDetails  {
     @Column (name = "id")
     private int id;
     @Column (name = "username")
+    @Size(min=5, message = "This field should include at least 5 symbols")
     private String username;
     @Column (name = "name")
+    @Size(min=5, message = "This field should include at least 5 symbols")
     private String name;
     @Column (name = "surname")
+    @Size(min=5, message = "This field should include at least 5 symbols")
     private String surname;
     @Column (name = "password")
+    @Size(min=5, message = "This field should include at least 5 symbols")
     private String password;
 
     @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
