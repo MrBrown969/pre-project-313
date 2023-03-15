@@ -11,6 +11,9 @@
 <form  th:action="@{/logout}" method="post">
     <input type="submit" value="Logout">
 </form>
+<form  th:action="@{/user}" method="get">
+    <input type="submit" value="User view">
+</form>
 
 <input type="button" value="Add a new user"
        onclick="window.location.href = 'admin/new'"/>

@@ -20,11 +20,11 @@ public class AdminController {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
-
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
+
     @Autowired
     public void setbCryptPasswordEncoder(BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -40,15 +40,12 @@ public class AdminController {
     @GetMapping("/new")
     public String addNewUser(Model model) {
         User newUser = new User();
-   /*     Role adminForSing = new Role("ROLE_ADMIN");
-        Role userForSing = new Role("ROLE_USER");
-        Set<Role> roleSet = new HashSet<>();
-        roleSet = Collections.singleton(adminForSing);*/
+
         model.addAttribute("newUser", newUser);
-       String adminRole = "ROLE_ADMIN";
-        model.addAttribute("ROLE_ADMIN",adminRole);
+        String adminRole = "ROLE_ADMIN";
+        model.addAttribute("ROLE_ADMIN", adminRole);
         String userRole = "ROLE_USER";
-        model.addAttribute("ROLE_USER",userRole);
+        model.addAttribute("ROLE_USER", userRole);
 
         return "new-user";
     }
@@ -57,18 +54,39 @@ public class AdminController {
     public String saveUser(@ModelAttribute("newUser") User user,
                            @RequestParam("name") String name,
                            @RequestParam("surname") String surname,
-                          @RequestParam("rolesFromFront") String role,
                            @RequestParam("username") String username,
-                           @RequestParam("password") String password
-                           ) {
+                           @RequestParam("password") String password,
+                           @RequestParam(value = "admin", required = false) String adminRoleStr,
+                           @RequestParam(value = "user", required = false) String userRoleStr
+    ) {
+
         user.setName(name);
         user.setSurname(surname);
         user.setUsername(username);
         user.setPassword(bCryptPasswordEncoder.encode(password));
-        Role role1 = new Role(role);//todo think about singleton
+
         Set<Role> roles = new HashSet<>();
-        roles.add(role1);
-       // user.setRoles(Collections.singleton(role));
+        if (adminRoleStr == null && userRoleStr == null) {
+            throw new IllegalArgumentException("You have to choose at least one role");
+        }
+        if (adminRoleStr != null) {
+            if (userService.getRoleByName(adminRoleStr) != null) {
+                roles.add(userService.getRoleByName(adminRoleStr));
+            } else {
+                Role roleToAdd = new Role(adminRoleStr);
+                roles.add(roleToAdd);
+            }
+        }
+        if (userRoleStr != null) {
+            if (userService.getRoleByName(userRoleStr) != null) {
+                roles.add(userService.getRoleByName(userRoleStr));
+            } else {
+                Role roleToAdd = new Role(userRoleStr);
+                roles.add(roleToAdd);
+            }
+        }
+        user.setRoles(roles);
+
         userService.saveUser(user);
         return "redirect:/admin";
     }
@@ -76,18 +94,46 @@ public class AdminController {
     @PostMapping("/updateUser")
     public String updateUser(Model model, @RequestParam("idToUpdate") Integer id) {
         model.addAttribute("userForUpdate", userService.getUserById(id));
-
-        //todo here I am adding new stuff
-        List<Role> listOfRoles = userService.getRoles();
-        model.addAttribute("listOfRoles",listOfRoles);
-
+        String adminRole = "ROLE_ADMIN";
+        model.addAttribute("ROLE_ADMIN", adminRole);
+        String userRole = "ROLE_USER";
+        model.addAttribute("ROLE_USER", userRole);
         return "update";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute("userForUpdate") User user
-            , @RequestParam("idToUpdate") Integer id) {
+    public String update(@ModelAttribute("userForUpdate") User user,
+                         @RequestParam(value = "admin", required = false) String adminRoleStr,
+                         @RequestParam(value = "user", required = false) String userRoleStr,
+                         @RequestParam("idToUpdate") Integer id) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        Set<Role> roles = new HashSet<>();
+        if(userService.findByUsername(user.getUsername()) != null
+                && userService.findByUsername(user.getUsername()).getId() != id) {
+            throw new IllegalArgumentException("This username already exists");
+
+        }
+        if (adminRoleStr == null && userRoleStr == null) {
+            throw new IllegalArgumentException("You have to choose at least one role");
+        }
+        if (adminRoleStr != null) {
+            if (userService.getRoleByName(adminRoleStr) != null) {
+                roles.add(userService.getRoleByName(adminRoleStr));
+            } else {
+                Role roleToAdd = new Role(adminRoleStr);
+                roles.add(roleToAdd);
+            }
+        }
+        if (userRoleStr != null) {
+            if (userService.getRoleByName(userRoleStr) != null) {
+                roles.add(userService.getRoleByName(userRoleStr));
+            } else {
+                Role roleToAdd = new Role(userRoleStr);
+                roles.add(roleToAdd);
+            }
+        }
+        user.setRoles(roles);
+
         userService.update(id, user);
         return "redirect:/admin";
     }

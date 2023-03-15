@@ -6,6 +6,9 @@
   <title>Update the user</title>
 </head>
 <body>
+<form  th:action="@{/logout}" method="post">
+  <input type="submit" value="Logout">
+</form>
 <form th:method="POST" th:action="@{/admin/update}" th:object="${userForUpdate}">
   <input type="hidden" name="idToUpdate" th:value="${userForUpdate.getId()}"/>
   <label for="name"> Enter a new name</label>
@@ -19,15 +22,19 @@
   <br>
   <label for="password"> Enter a new password</label>
   <input type="text" th:field="*{password}" id="password">
-  <div class="form-group row">
-    <label class="col-4 col-form-label">Roles: </label>
-
-    <div class="col-8">
-      <th:block th:each="role: ${listOfRoles}">
-        <input type="checkbox" th:field="*{roles}"
-               th:text="${role.name}" th:value="${role.id}" class="m-2" />
-      </th:block>
-    </div>
+  <br>
+  <br>
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" th:value="${ROLE_ADMIN}" id="flexCheckDefault" name="admin">
+    <label class="form-check-label" for="flexCheckDefault">
+      Admin
+    </label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" th:value="${ROLE_USER}" id="flexCheckChecked" name="user">
+    <label class="form-check-label" for="flexCheckChecked">
+      User
+    </label>
   </div>
 
   <br>

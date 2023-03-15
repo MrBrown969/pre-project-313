@@ -46,14 +46,11 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public boolean saveUser(User user) {
-        User userFromDB = userRepository.findByUsername(user.getUsername());//todo transfer Encoder here
+        User userFromDB = userRepository.findByUsername(user.getUsername());
 
         if (userFromDB != null) {
-            throw new UsernameNotFoundException("A user with this username already exists");
+            throw new IllegalArgumentException("A user with this username already exists");
         }
-  /*      Role roleByName = roleService.getRoleByName(role); //todo wtf
-        user.setRoles(Collections.singleton(roleByName));*/
-
         user.setPassword(user.getPassword());
         userRepository.save(user);
         return true;
@@ -78,7 +75,8 @@ public class UserService implements UserDetailsService {
         userToBeUpdated.setSurname(user.getSurname());
         userToBeUpdated.setPassword(user.getPassword());
         userToBeUpdated.setUsername(user.getUsername());
-        //todo add roles
+        userToBeUpdated.setRoles(user.getRoles());
+        //todo add repetition filter here
         return userToBeUpdated;
     }
 
@@ -115,31 +113,13 @@ public class UserService implements UserDetailsService {
                 mapRolesToAuthorities(user.getRoles()));
     }
 
-
-
-    //todo might want to delete all what's below
-
     public List<Role> getRoles() {
         return roleRepository.findAll();
     }
 
-/*    public void addRole(Role role) {
-        roleRepository.save(role);
-    }*/
-
     public Role getRoleByName(String name) {//todo do I need to remake that?
         return roleRepository.findRoleByName(name);
     }
-/*
-    public List<Role> getUniqAllRoles() {
-        return roleRepository.findAll();
-
-    }*/
-//todo new portion from the article on how to implement roles
-/*public User get(Integer id) {//todo why?
-    return userRepository.findById(id).get();
-}*/
-
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
         return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());

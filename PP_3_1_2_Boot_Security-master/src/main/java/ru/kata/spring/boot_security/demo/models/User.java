@@ -27,7 +27,7 @@ public class User implements UserDetails  {
     @Column (name = "password")
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(
             name = "users_roles"
             , joinColumns = @JoinColumn(name = "User_id")
@@ -40,7 +40,8 @@ public class User implements UserDetails  {
 
     }
 
-    public User(String username, String name, String surname, Set<Role> roles,Collection<? extends GrantedAuthority> mapRolesToAuthorities) {
+    public User(String username, String name, String surname, Set<Role> roles,Collection<?
+            extends GrantedAuthority> mapRolesToAuthorities) {
         this.username = username;
         this.name = name;
         this.surname = surname;

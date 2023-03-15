@@ -5,6 +5,9 @@
     <title>New user</title>
 </head>
 <body>
+<form  th:action="@{/logout}" method="post">
+    <input type="submit" value="Logout">
+</form>
 <form method="POST" ACTION="saveUser">
     <label for="Name">Name</label>
     <input name="name" type="text" id="Name"/>
@@ -20,14 +23,23 @@
     <input name="password" type="text" id="password"/>
     <br>
 
-    <label>Choose your role:</label>
-    <select class="form-select" size="3" aria-label="size 3 select example" name="rolesFromFront">
-        <option th:value="${ROLE_ADMIN}">Admin</option>
-        <option th:value="${ROLE_USER}">User</option>
-    </select>
-    <br>
-    <br>
 
+    <br>
+    <br>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" th:value="${ROLE_ADMIN}" id="flexCheckDefault" name="admin">
+        <label class="form-check-label" for="flexCheckDefault">
+            Admin
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" th:value="${ROLE_USER}" id="flexCheckChecked" name="user">
+        <label class="form-check-label" for="flexCheckChecked">
+            User
+        </label>
+    </div>
+    <br>
+    <br>
     <input type="submit" value="ok"/>
 
 </form>
